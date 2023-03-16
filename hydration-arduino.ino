@@ -9,17 +9,20 @@ String path = "/NEW";
 
 const int analogInPin = A0;
 int sensorValue = 0;
-  
-// WIFI CONFIGURATION
-char ssid[] = SECRET_SSID;        // your network SSID (name)
-char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
-int status = WL_IDLE_STATUS;     // the Wifi radio's status
 
-void setup() {
+// WIFI CONFIGURATION
+char ssid[] = SECRET_SSID;
+char pass[] = SECRET_PASS;
+int status = WL_IDLE_STATUS;
+
+void setup()
+{
   Serial.begin(9600);
-  while (!Serial);
- 
-  while (status != WL_CONNECTED) {
+  while (!Serial)
+    ;
+
+  while (status != WL_CONNECTED)
+  {
     connectToWifi();
   }
 
@@ -27,32 +30,35 @@ void setup() {
   printWifiData();
 
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH, SECRET_SSID, SECRET_PASS);
-  Firebase.reconnectWiFi(true); // RECONNECT WHEN WIFI IS DOWN
-  
+  Firebase.reconnectWiFi(true);
+
   Serial.println("Setup complete!");
 }
 
-void loop() {
+void loop()
+{
   sensorValue = analogRead(analogInPin);
-  
+
   Serial.print("sensor = ");
   Serial.print(sensorValue);
   Serial.print("\n");
 
   writeToFirebase(sensorValue, "/currentLevel");
-    
+
   delay(2);
 }
 
-void connectToWifi(){
-    Serial.print("Connecting to network: ");
-    Serial.println(ssid);
-    status = WiFi.begin(ssid, pass);
+void connectToWifi()
+{
+  Serial.print("Connecting to network: ");
+  Serial.println(ssid);
+  status = WiFi.begin(ssid, pass);
 
-    delay(10000);
+  delay(10000);
 }
 
-void printWifiData() {
+void printWifiData()
+{
   Serial.println("----------------------------------------");
   Serial.println("Board Information:");
   // print your board's IP address:
@@ -77,14 +83,15 @@ void printWifiData() {
   Serial.println("----------------------------------------");
 }
 
-void writeToFirebase(int t, String subpath){
-   if (Firebase.setInt(firebaseData, path + subpath, t))
-    {
-      Serial.println("New entry logged");
-    }
-    else
-    {
-      Serial.println("ERROR : " + firebaseData.errorReason());
-      Serial.println();
-    }
+void writeToFirebase(int t, String subpath)
+{
+  if (Firebase.setInt(firebaseData, path + subpath, t))
+  {
+    Serial.println("New entry logged");
+  }
+  else
+  {
+    Serial.println("ERROR : " + firebaseData.errorReason());
+    Serial.println();
+  }
 }
